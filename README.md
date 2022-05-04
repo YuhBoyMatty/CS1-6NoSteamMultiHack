@@ -5,7 +5,7 @@ THIS CHEAT BUILD FOR VERSION:
 
 Protocol version 47
 Exe version 1.1.2.5 (cstrike)
-Exe build: 10:56:59 Oct  3 2005 (32
+Exe build: 10:56:59 Oct  3 2005 (3266)
 
 if you Want, you can update offset, for diferent CS Version Support
 
