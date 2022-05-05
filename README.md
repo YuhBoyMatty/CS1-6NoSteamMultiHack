@@ -1,4 +1,13 @@
 # CS1-6NoSteamMultiHack
+
+# Features:
+
+ESP Line FOV Aimbot, Distance Aimbot, Chams Spider, Chams Solid, ESP Box 2D, ESP Box 3D, Wallhack, ESP Velocity, ESP Forward, Radar, Bunny Hop, Speedhack
+
+![Alt text](/Photos/menu.png?raw=true "Menu")
+
+![Alt text](/Photos/chams.png?raw=true "Menu")
+
 Hack for Counter Strike 1.6 No Steam
 
 THIS CHEAT BUILD FOR VERSION:
