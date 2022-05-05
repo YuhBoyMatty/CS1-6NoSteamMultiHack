@@ -13,18 +13,39 @@ extern WindowInfo* wi;
 ESP::ESP(uintptr_t hlAddr) : EntityListManager(*entityList)
 {
 	m_ViewMatrixAddr = (float*)(hlAddr + 0x1820100);
-	m_width = 1024;
-	m_height = 768;
+
+	GLint m_viewport[4];
+
+	glGetIntegerv(GL_VIEWPORT, m_viewport);
+
+	m_width = float(m_viewport[2]);
+	m_height = float(m_viewport[3]);
 
 	auto* pESPSect = menu->rootSection->AddSection("ESP", &m_ESP);
 	pESPSect->AddButtom("Line", &m_Line);
+	pESPSect->AddButtom("WallHack", &m_Wallhack);
 
-	std::vector<ButtonCreationInfo> tiBox;
-	tiBox.push_back({"Box 2D", &m_Box2D});
-	tiBox.push_back({"Box 3D" ,	&m_Box3D });
 	
+	// Adding ESP Box
 	Section* pESPBoxSect = pESPSect->AddSection("ESP Box", new bool(false));
+	std::vector<ButtonCreationInfo> tiBox;
+
+	tiBox.push_back({ "Box 2D", &m_Box2D });
+	tiBox.push_back({ "Box 3D" ,&m_Box3D });
 	pESPBoxSect->AddLinkedButtonList(tiBox);
+
+	Section* pESPChamsSect = pESPSect->AddSection("Chams", new bool(false));
+
+	pESPChamsSect->AddButtom("Enabled", &m_bChamsEnabled);
+	Section* pChamsType = pESPChamsSect->AddSection("Mode", new bool(false));
+	std::vector<ButtonCreationInfo> chamsModeInf;
+	pESPChamsSect->AddButtom("Chams Enemys", &m_ChamsEnemys);
+	pESPChamsSect->AddButtom("Chams Team", &m_ChamsTeams);
+	pESPChamsSect->AddButtom("Chams Objects", &m_ChamsObjects);
+
+	chamsModeInf.push_back({"Solid", &m_ChamsSolid});
+	chamsModeInf.push_back({"Lines" ,&m_ChamsLines});
+	pChamsType->AddLinkedButtonList(chamsModeInf);
 
 	pESPSect->AddButtom("Forward", &m_DrawForward);
 	pESPSect->AddButtom("FOV", &m_DrawFov);

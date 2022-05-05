@@ -176,6 +176,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Radar.cpp" />
     <ClCompile Include="reclass.h" />
+    <ClCompile Include="SpeedHack.cpp" />
     <ClCompile Include="Trampoline.cpp" />
     <ClCompile Include="Vectors.cpp" />
   </ItemGroup>
@@ -189,6 +190,7 @@
     <ClInclude Include="Hook.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Radar.h" />
+    <ClInclude Include="SpeedHack.h" />
     <ClInclude Include="Trampoline.h" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>

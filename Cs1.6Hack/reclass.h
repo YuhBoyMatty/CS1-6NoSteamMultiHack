@@ -81,10 +81,15 @@ public:
 	Vector2 Rot2; //0x02CC
 	char pad_02D4[164]; //0x02D4
 	int32_t bIsDucked2; //0x0378
-	char pad_037C[1996]; //0x037C
+	char pad_037C[48]; //0x037C
+	float N00000134; //0x03AC
+	char pad_03B0[1944]; //0x03B0
 	Vector3 Pos3; //0x0B48
 	Vector2 Rot3; //0x0B54
-	char pad_0B5C[92]; //0x0B5C
+	char pad_0B5C[4]; //0x0B5C
+	Vector3 Pos4; //0x0B60
+	char pad_0B6C[76]; //0x0B6C
+
 }; //Size: 0x0BB8
 
 
@@ -93,3 +98,21 @@ class EntityList
 public:
 	class Player EntityList[120]; //0x0000
 }; //Size: 0x57E40
+
+class IGameStudioModelRender
+{
+public:
+	char pad_0000[44]; //0x0000
+	class cVar* pTORDrawEnttesCvar; //0x002C
+	class Player* pToEntity; //0x0030
+	char pad_0034[16]; //0x0034
+	class ModelInfo* pModelInfo; //0x0044
+	char pad_0048[56]; //0x0048
+}; //Size: 0x0080
+
+
+class ModelInfo
+{
+public:
+	char pad_0000[1088]; //0x0000
+}; //Size: 0x0440

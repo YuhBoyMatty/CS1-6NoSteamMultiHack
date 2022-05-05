@@ -5,21 +5,21 @@
 
 void HackThread(HMODULE hMod)
 {
-	/*FILE* f;
+	FILE* f;
 	AllocConsole();
-	freopen_s(&f, "CONOUT$", "w", stdout);*/
+	freopen_s(&f, "CONOUT$", "w", stdout);
 
 	GLInitHook();
 
 	while (!(GetAsyncKeyState(VK_DELETE) & 1))
 	{	
-		Sleep(10);
+		Sleep(100);
 	}
 
 	GLDisableHook();
-	//FreeConsole();
+	FreeConsole();
 	Sleep(100);
-	//fclose(f);
+	fclose(f);
 	FreeLibraryAndExitThread(hMod, 1);
 }
 
