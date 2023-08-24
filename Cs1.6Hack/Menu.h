@@ -113,6 +113,8 @@ struct Section : public ClickableElement {
 	Element* GetChildNormalized(Element* pElem);
 	void	AddLinkedButtonList(std::vector<ButtonCreationInfo> btns, bool extinguishable = true);
 	void HandleClick();
+	bool IsLast(Element* pElement);
+	bool IsFirst(Element* pElement);
 
 
 	Section(void* data);
@@ -161,6 +163,7 @@ public:
 	void RenderBasicElements(std::string & name, float itmIndexX, float itmIndexY, void * element, const GLubyte textColor[3] = rgb::white);
 	void InitCurrElement(Element* pElem);
 	Rect GetItemRect(int yIndex);
+	void HandleSectionEnter(bool fromStart = true);
 	static float Perc2Res(float res, float perc);
 };
 

@@ -28,85 +28,70 @@ float offset = 0.0001f;
 
 void Menu::Update()
 {
-
 	if (GetAsyncKeyState(VK_INSERT) & 1)
 		m_enabled = !m_enabled;
 
-	/*if (GetAsyncKeyState(VK_LEFT))
-		offset -= 0.05f;
+	if (m_enabled == false)
+		return;
 
-	if (GetAsyncKeyState(VK_RIGHT))
-		offset += 0.05f;*/
+	if (GetAsyncKeyState(VK_UP) & 1)
+		HandleStepUp();
 
-	//printf("%.2f\n", offset);
+	if (GetAsyncKeyState(VK_DOWN) & 1)
+		HandleStepDown();
 
-	if (m_enabled)
+	if (GetAsyncKeyState(VK_LEFT) & 1)
 	{
-		if (GetAsyncKeyState(VK_UP) & 1)
+		switch (currElement->elementType)
 		{
-			HandleStepUp();
-		}
 
-		if (GetAsyncKeyState(VK_DOWN) & 1)
+		case SLIDER:
 		{
-			HandleStepDown();
+			auto* pSlider = (Slider*)currElement->element;
+			float& rValue = *pSlider->pFloat;
+
+			if (rValue - pSlider->vIncrement > pSlider->vMin)
+				rValue -= pSlider->vIncrement;
+
 		}
-
-		if (GetAsyncKeyState(VK_LEFT) & 1)
-		{
-			switch (currElement->elementType)
-			{
-
-			case SLIDER:
-			{
-				auto* pSlider = (Slider*)currElement->element;
-				float& rValue = *pSlider->pFloat;
-
-				if (rValue - pSlider->vIncrement > pSlider->vMin)
-					rValue -= pSlider->vIncrement;
-
-			}
-			break;
-			}
+		break;
 		}
-
-		if (GetAsyncKeyState(VK_RIGHT) & 1)
-		{
-			switch (currElement->elementType)
-			{
-
-			case SLIDER:
-			{
-				auto* pSlider = (Slider*)currElement->element;
-				float& rValue = *pSlider->pFloat;
-
-				if (rValue + pSlider->vIncrement < pSlider->vMax)
-					rValue += pSlider->vIncrement;
-
-			}
-			break;
-			}
-		}
-
-		if (GetAsyncKeyState(0x46) & 1)
-		{
-			switch (currElement->elementType)
-			{
-
-			case SECTION:
-				((Section*)currElement->element)->HandleClick();
-			break;
-
-			case BUTTON:
-				((Button*)currElement->element)->HandleClick();
-			break;
-			}
-		}
-
-		rootSection->Update(0, 0);
 	}
 
-	
+	if (GetAsyncKeyState(VK_RIGHT) & 1)
+	{
+		switch (currElement->elementType)
+		{
+
+		case SLIDER:
+		{
+			auto* pSlider = (Slider*)currElement->element;
+			float& rValue = *pSlider->pFloat;
+
+			if (rValue + pSlider->vIncrement < pSlider->vMax)
+				rValue += pSlider->vIncrement;
+
+		}
+		break;
+		}
+	}
+
+	if (GetAsyncKeyState(0x46) & 1)
+	{
+		switch (currElement->elementType)
+		{
+
+		case SECTION:
+			((Section*)currElement->element)->HandleClick();
+			break;
+
+		case BUTTON:
+			((Button*)currElement->element)->HandleClick();
+			break;
+		}
+	}
+
+	rootSection->Update(0, 0);	
 }
 
 void Menu::DrawString(char* str, Rect& r, const GLubyte color[3], float offsetX)
@@ -401,6 +386,19 @@ void Section::HandleClick()
 	Toggle();
 }
 
+bool Section::IsLast(Element* pElement)
+{
+	return  pElement == lastElementCreated;
+}
+
+bool Section::IsFirst(Element* pElement)
+{
+	if (section_elements.size() < 1)
+		return false;
+
+	return section_elements[0] == pElement;
+}
+
 Section::Section(void * data)
 {
 	SectionCreationInfo* pSci = (SectionCreationInfo*)data;
@@ -493,52 +491,30 @@ void Menu::PopIndexContext(int Outtrowards)
 
 void Menu::HandleStepUp()
 {
-	
-	if (NeedNormalization(UP))
+	if (currSection->IsFirst(currElement) && indexStack.size() > 0)
 	{
-		if (indexStack.size() != 0)
-		{
-			PopIndexContext(UP);
-		}
-		else {
-			HandleSectionStepUp();
-		}
+		PopIndexContext(UP);
+		return;
 	}
-	else {
-		HandleSectionStepUp();
-	}
+
+	DoStepNormalizated(UP);
+
+	while (currElement->IsSection() && ((Section*)(currElement->element))->GetEnabled() == true)
+		HandleSectionEnter(false);
 }
 
 void Menu::HandleStepDown()
 {
-
-	if (currElement->IsSection())
+	if (currElement->IsSection() && ((Section*)(currElement->element))->GetEnabled() == true)
 	{
-		auto* pSect = (Section*)currElement->element;
-		if (pSect->GetEnabled())
-		{
-			PushIndexContext(DOWN);
-			MakeSectionCurrentIndexContext(pSect, UP);
-		}
-		else {
-			if (NeedNormalization(DOWN))
-			{
-				HandleContextDown();
-			}
-			else {
-				DoStepNormalizated(DOWN);
-			}
-		}
+		HandleSectionEnter();
+		return;
 	}
-	else {
-		if (NeedNormalization(DOWN))
-		{
-			HandleContextDown();
-		}
-		else {
-			DoStepNormalizated(DOWN);
-		}
-	}
+
+	while (currSection->IsLast(currElement) && indexStack.size() > 0)
+		PopIndexContext(UP);
+
+	DoStepNormalizated(DOWN);
 }
 
 void Menu::HandleContextDown()
@@ -631,6 +607,12 @@ Rect Menu::GetItemRect(int yIndex)
 	rResult.y += yIndex * m_itmPadding;
 	
 	return rResult;
+}
+
+void Menu::HandleSectionEnter(bool fromStart)
+{
+	PushIndexContext(DOWN);
+	MakeSectionCurrentIndexContext((Section*)(currElement->element), fromStart ? UP : DOWN);
 }
 
 float Menu::Perc2Res(float res, float perc)
